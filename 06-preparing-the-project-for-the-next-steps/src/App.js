@@ -13,12 +13,27 @@ function App() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('https://swapi.dev/api/films/');
+      const response = await fetch("https://swapi.dev/api/films/");
+      // const response = await fetch("https://react-http-fdbad-default-rtdb.firebaseio.com/movies.json");
       if (!response.ok) {
-        throw new Error('Something went wrong!');
+        throw new Error("Something went wrong!");
       }
 
       const data = await response.json();
+
+      console.log(response, "response");
+      console.log(data, "data");
+
+      // const loadedMovies = [];
+
+      // for (const key in data) {
+      //   loadedMovies.push({
+      //     id: key,
+      //     title: data[key].title,
+      //     openingText: data[key].openingText,
+      //     releaseDate: data[key].releaseDate
+      //   })
+      // }
 
       const transformedMovies = data.results.map((movieData) => {
         return {
@@ -28,6 +43,7 @@ function App() {
           releaseDate: movieData.release_date,
         };
       });
+
       setMovies(transformedMovies);
     } catch (error) {
       setError(error.message);
@@ -35,13 +51,27 @@ function App() {
     setIsLoading(false);
   }, []);
 
+  // using this useEffect immediately loads the fetchMoviesHandler() on initial mounting. It invokes the callback function (fetchMoviesHandler() ), on initial render
+  // best practice to include all dependencies as in the useEffect (fetchMoviesHandler()). Problem with that is in javascript, the function is an object that always changes, therefore we must use useCallback on fetchMoviesHandler to prevent the function from re-rendering over and on
   useEffect(() => {
     fetchMoviesHandler();
   }, [fetchMoviesHandler]);
 
-  function addMovieHandler(movie) {
+  async function addMovieHandler(movie) {
     console.log(movie);
   }
+
+  // async function addMovieHandler(movie) {
+  //   const response = await fetch("https://react-http-fdbad-default-rtdb.firebaseio.com/movies.json", {
+  //     method: 'POST',
+  //     body: JSON.stringify(movie),
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     }
+  //   });
+  //   const data = await response.json()
+  //   console.log(data);
+  // }
 
   let content = <p>Found no movies.</p>;
 
